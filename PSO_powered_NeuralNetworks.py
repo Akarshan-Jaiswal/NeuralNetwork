@@ -335,7 +335,9 @@ def fitness_function(weights,p_neural_network):
     return error
 
 # Load data from CSV file
-data = pd.read_csv('Bank_Data 1.csv')
+#data = pd.read_csv('Bank_Data 1.csv')
+data = pd.read_csv('Data/Bank_Data 1.csv')
+
 
 # Assuming the last column is the target variable
 X = data.iloc[:, :-1].values

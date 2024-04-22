@@ -335,8 +335,8 @@ def fitness_function(weights,p_neural_network):
     return error
 
 # Load data from CSV file
-data = pd.read_csv('C:/Users/akars/Downloads/Bank_Data 1.csv')
-
+#data = pd.read_csv('C:/Users/akars/Downloads/Bank_Data 1.csv')
+data = pd.read_csv('Data/Bank_Data 1.csv')
 # Assuming the last column is the target variable
 X = data.iloc[:, :-1].values
 y = data.iloc[:, -1].values.reshape(-1, 1)
