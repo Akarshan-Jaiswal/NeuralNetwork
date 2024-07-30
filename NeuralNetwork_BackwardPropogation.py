@@ -1,44 +1,5 @@
-# NeuralNetwork
-Implementing Neural network with different ways to adjust weights from scratch.
-
-# Implementation
-In the following project we tried to implement a Multi layered and customisable Feed-Forward Artificial Neural Network (ANN) with Backward Propogation and a Particle Swarm Optimisation evolutionary algorithm (PSO) from the scratch. With the intent of adjusting the weights and biases of the Neural network with either the evolutionary algorithm or backward propogation by the end of the project.
-We approached this project in a step-by-step implementation process. During the project we were able to generate the following things from the scratch.
-1.	A Multi layered and customizable feed-forward Artificial Neural Network (ANN).
-2.	A Simple Particle Swarm Optimisation evolutionary algorithm
-3.	Combining the above two to make a Multi layered Neural Network that trains with the PSO.
-
-# Implementation and design of (ANN)
-For the project we have implemented a multi-layered feed-forward configurable neural network with appropriate error handling for all layers, considering the popular test cases. Our neural network can take in different types of activation functions and calculate various model evaluation metrics which include error calculations as well. It also has a function to interact with backward propogation or PSO to receive the optimised weights using which the neural network gets updated to give more accurate predictions. As to retain customisability was one of the primary aims. Hence the user of this code can pass values for nearly all the hyper parameters of the ANN. 
-
-# Implementation and design of (PSO)
-We have implemented a basic version of PSO that has been customized to work with our multi-layered feed-forward neural network. PSO comes with a few nuances, namely calculating the total dimensions based on the neural network configurations. It does not have static hyperparameters but some of them do have a default value. Our fitness function is specially defined for adjusting weights and optimising them for the neural network. It also supports different type of error rectification functions based on the neural network configuration too because we wanted to retain customisability of the PSO as much as possible. So, the user of this code can pass values for nearly all the hyper parameters of the PSO with exception of number of dimensions.
-Combining ANN with PSO
-While combining the two algorithms to run with each other we observed that some modifications could be made with both algorithms to reduce the error that could occur when they run in their basic form. Such as we removed the input of number of dimensions from PSO and let the PSO figure it out based on all the layer configurations in the ANN. Another example would be a function in the Neural network class that can update its weights and biases with all the PSO optimised weights and biases, and final example would be the objective/fitness function of the PSO which is fully revamped to adjust neural network biases and weight according to the error rectification function of the neural network itself.
-
-# Code Breakdown
-## Neural network with backward propogation
-
-This implementation now includes:
-
-1) Activation Functions: Sigmoid, ReLU, and Tanh with their derivatives.
-2) Loss Functions: Mean Squared Error and Cross-Entropy with their derivatives.
-3) Regularization: L1 and L2 regularization with their derivatives.
-4) Optimizers: SGD, Adam, and AdaMax.
-6) Callbacks: EarlyStopping for stopping training when the loss doesn't improve.
-7) History: Tracking and printing the loss at the end of each epoch.
-8) Evaluation metrics : Evaluating model against several parameters like Accuracy, Mean Square Error, Log Loss, Precision and more.
-
-The train method accepts callbacks to integrate these features, and the optimizer is used to update weights and biases during training.
-
-Library Imports
-```bash
 import numpy as np
-```
 
-### ActivationFunction: 
-This class provides static methods for commonly used activation functions (sigmoid, relu, tanh) and their derivatives. These functions introduce non-linearity, allowing the network to learn complex relationships in the data.
-```bash
 '''
 ActivationFunction: 
 This class provides static methods for commonly used activation functions in neural networks, along with their derivatives. 
@@ -75,15 +36,10 @@ class ActivationFunction:
     @staticmethod
     def tanh_derivative(x):
         return 1 - np.tanh(x) ** 2
-```
 
-### LossFunction:
-This class provides static methods for calculating loss functions (mean squared error, cross-entropy, log loss) used to measure how well the network's predictions match the targets.
-Includes clipping for cross-entropy to prevent division by zero.
-```bash
 '''
 LossFunction: 
-This class provides static methods for calculating loss functions, which measure how well the networks predictions match the actual targets.
+This class provides static methods for calculating loss functions, which measure how well the network's predictions match the actual targets.
 '''
 
 class LossFunction:
@@ -113,11 +69,7 @@ class LossFunction:
     @staticmethod
     def log_loss(y_true, y_pred):
         return -np.mean(y_true * np.log(np.clip(y_pred, 1e-15, 1 - 1e-15)) + (1 - y_true) * np.log(1 - np.clip(y_pred, 1e-15, 1 - 1e-15)))
-```
 
-### Regularization:
-This class provides static methods for regularization techniques (L1, L2) used to prevent overfitting by penalizing large weights.
-```bash
 '''
 Regularization: 
 This class provides static methods for regularization techniques, which help prevent overfitting by penalizing large weights.
@@ -143,25 +95,17 @@ class Regularization:
     @staticmethod
     def l2_derivative(weights, alpha):
         return alpha * weights
-```
 
-### Optimizer:
-This is an abstract class that defines the interface for updating the network's weights during training. Subclasses implement specific optimization algorithms (SGD, Adam).
-```bash
 '''
 Optimizer: 
-This is an abstract class that defines the interface for updating the networks weights during training. 
+This is an abstract class that defines the interface for updating the network's weights during training. 
 Subclasses implement specific optimization algorithms.
 '''
 class Optimizer:
     # update: This method is not implemented in the abstract class but should be defined by subclasses to update weights based on gradients and learning rate.
     def update(self, weights, gradients, learning_rate):
         raise NotImplementedError
-```
 
-### SGD (Stochastic Gradient Descent):
-This class implements the SGD optimizer, which updates weights based on the gradients of a single data point at a time.
-```bash
 '''
 SGD (Stochastic Gradient Descent):
 This class implements the SGD optimizer, which updates weights based on the gradients of a single data point at a time.
@@ -170,12 +114,7 @@ class SGD(Optimizer):
     # update: Updates weights by subtracting the learning rate times the gradients.
     def update(self, weights, gradients, learning_rate):
         return weights - learning_rate * gradients
-```
-### Adam (Adaptive Moment Estimation): 
-This class implements the Adam optimizer, a more advanced algorithm that adapts the learning rate for each weight based on past gradients.
 
-Uses momentum and adaptive learning rates with proper initialization.
-```bash
 '''
 Adam (Adaptive Moment Estimation):
 This class implements the Adam optimizer, a more advanced algorithm that adapts the learning rate for each weight based on past gradients.
@@ -203,16 +142,11 @@ class Adam(Optimizer):
         v_hat = self.v[layer_id] / (1 - self.beta2 ** self.t)
 
         return weights - learning_rate * m_hat / (np.sqrt(v_hat) + self.epsilon)
-```
 
-### EarlyStopping:
-This class implements a callback for early stopping during training.
-Monitors validation loss and stops training if it doesn't improve for a certain number of epochs.
-```bash
 '''
 EarlyStopping: 
 This class implements a callback for early stopping during training. 
-It monitors the validation loss and stops training if the loss doesnt improve for a certain number of epochs (iterations).
+It monitors the validation loss and stops training if the loss doesn't improve for a certain number of epochs (iterations).
 '''
 class EarlyStopping:
     def __init__(self, patience=5, min_delta=0):
@@ -233,11 +167,7 @@ class EarlyStopping:
                 self.stopped_epoch = epoch
                 return True
         return False
-```
 
-### History:
-This class keeps track of the loss values during training for monitoring and visualization purposes.
-```bash
 '''
 History:
 This class keeps track of the loss values during training for monitoring and visualization purposes.
@@ -250,16 +180,7 @@ class History:
     def on_epoch_end(self, epoch, loss):
         self.losses.append(loss)
         print(f'Epoch {epoch + 1}: loss = {loss}')
-```
 
-### NeuralNetwork:
-
-This is the main class that builds and trains the neural network.
-
-- Provides methods for adding layers, setting loss function, optimizer, and performing forward and backward propagation.
-- Includes regularization and early stopping functionalities.
-- Evaluation Metrics: This method seems like it could be placed in a separate class for better organization. It calculates various metrics like accuracy, precision, recall, etc.
-```bash
 '''
 NeuralNetwork: 
 This is the main class that builds trains and evaluates the neural network.
@@ -406,6 +327,3 @@ class NeuralNetwork:
         if (precision + recall)!=0:
             result["F-Measure"] = (2* precision * recall)/(precision + recall) #F1 score
         return result
-```
-
-# Work in Progress
